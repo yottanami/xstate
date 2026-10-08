@@ -371,6 +371,37 @@ describe('setup()', () => {
     });
   });
 
+  it('should accept a `not` guard embedding a `stateIn` guard in the machine when guards were not configured', () => {
+    setup({}).createMachine({
+      initial: 'idle',
+      states: {
+        idle: {
+          on: {
+            TOGGLE: { guard: not(stateIn('idle')) }
+          }
+        }
+      }
+    });
+  });
+
+  it('should not accept an unknown guard next to a `stateIn` guard in an `and` guard in the machine', () => {
+    setup({
+      guards: {
+        check: () => true
+      }
+    }).createMachine({
+      initial: 'idle',
+      states: {
+        idle: {
+          on: {
+            // @ts-expect-error
+            TOGGLE: { guard: and(['chekc', stateIn('idle')]) }
+          }
+        }
+      }
+    });
+  });
+
   it('should be able to use a parameterized `assign` action with its required params in the machine', () => {
     setup({
       types: {} as {
