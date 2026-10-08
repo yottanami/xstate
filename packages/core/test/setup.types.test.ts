@@ -19,6 +19,7 @@ import {
   sendTo,
   setup,
   spawnChild,
+  stateIn,
   stopChild
 } from '../src';
 
@@ -315,6 +316,57 @@ describe('setup()', () => {
         check1: (_) => true,
         check2: (_) => true,
         combinedCheck: and(['check1', not(() => true)])
+      }
+    });
+  });
+
+  it('should accept a `stateIn` guard in the machine when guards were not configured', () => {
+    setup({
+      types: {
+        events: {} as { type: 'TOGGLE' }
+      }
+    }).createMachine({
+      initial: 'idle',
+      states: {
+        idle: {
+          on: {
+            TOGGLE: { guard: stateIn('idle') }
+          }
+        }
+      }
+    });
+  });
+
+  it('should accept a `stateIn` guard in the machine when guards were configured', () => {
+    setup({
+      guards: {
+        check: () => true
+      }
+    }).createMachine({
+      initial: 'idle',
+      states: {
+        idle: {
+          on: {
+            TOGGLE: { guard: stateIn('idle') }
+          }
+        }
+      }
+    });
+  });
+
+  it('should accept a `stateIn` guard embedded in an `and` guard in the machine', () => {
+    setup({
+      guards: {
+        check: () => true
+      }
+    }).createMachine({
+      initial: 'idle',
+      states: {
+        idle: {
+          on: {
+            TOGGLE: { guard: and(['check', stateIn('idle')]) }
+          }
+        }
       }
     });
   });

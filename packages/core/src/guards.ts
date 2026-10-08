@@ -108,12 +108,7 @@ export function stateIn<
   TParams extends ParameterizedObject['params'] | undefined
 >(
   stateValue: StateValue
-): GuardPredicate<
-  TContext,
-  TExpressionEvent,
-  TParams,
-  any // TODO: recheck if we could replace this with something better here
-> {
+): GuardPredicate<TContext, TExpressionEvent, TParams, never> {
   function stateIn() {
     if (isDevelopment) {
       throw new Error(`This isn't supposed to be called`);
